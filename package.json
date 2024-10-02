@@ -4,7 +4,7 @@
   "description": "The http-api assignment part ii",
   "main": "server.js",
   "scripts": {
-    "nodemon": "nodemon -e js,html,css --watch ./src --watch ./hosted ./src/server.js",
+    "nodemon": "nodemon -e js,html,css --watch ./src --watch ./client ./src/server.js",
     "start": "node ./src/server.js",
     "pretest": "eslint ./src --fix",
     "test": "echo \"Tests Complete\""

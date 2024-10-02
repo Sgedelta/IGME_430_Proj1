@@ -33,10 +33,10 @@ const handleResponse = async (response, parseResponse) => {
         }
     
     
-        if(responseJSON.users) {
-          let jsonString = JSON.stringify(responseJSON.users);
+
+          let jsonString = JSON.stringify(responseJSON.data.cards[250].name);
           content.innerHTML += `<p>${jsonString}</p>`;
-        }
+        
     
     } else {
       content.innerHTML += '<p>Metadata Recieved</p>'
@@ -82,8 +82,8 @@ const handleResponse = async (response, parseResponse) => {
     const init = () => {
     const form = document.querySelector("#userForm");
     const postForm = document.querySelector("#nameForm");
-    
-    const getUser = (e) => {
+
+    const getWholeSet = (e) => {
         e.preventDefault();
         requestUpdate(form);
         return false;
@@ -94,9 +94,12 @@ const handleResponse = async (response, parseResponse) => {
         sendPost(postForm);
         return false;
     }
-    
-    form.addEventListener('submit', getUser);
+
+    form.addEventListener('submit', getWholeSet);
     postForm.addEventListener('submit', addUser);
+
+
+    console.log("Client Code Loaded!");
     };
     
     window.onload = init;

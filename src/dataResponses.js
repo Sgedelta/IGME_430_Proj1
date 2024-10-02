@@ -1,5 +1,6 @@
+const fs = require('fs');
 
-const users = {};
+const data = JSON.parse(fs.readFileSync(`${__dirname}/../datasets/DSK.json`));
 
 // generic response, not JSON specifically.
 const respond = (request, response, status, content, type ) => {
@@ -22,14 +23,10 @@ const respond = (request, response, status, content, type ) => {
 module.exports.respond = respond; //exported so that we can use it in htmlResponses - cleaner and less repeated code. 
 
 
-const getUsers = (request, response) => {
-    const responseJSON = {
-        users
-    };
-
-    return respond(request, response, 200, responseJSON, 'application/json');
+const getWholeSet = (request, response) => {
+    return respond(request, response, 200, data, 'application/json');
 };
-module.exports.getUsers = getUsers;
+module.exports.getWholeSet = getWholeSet;
 
 const addUser = (request, response) => {
     const responseJSON = {

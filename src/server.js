@@ -1,14 +1,15 @@
 const http = require('http');
 const dataHandler = require('./dataResponses.js');
-const htmlHandler = requre('./htmlResponses.js');
+const htmlHandler = require('./htmlResponses.js');
 const query = require('querystring');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const getUrlStruct = {
     '/': htmlHandler.getIndex,
-    '/style.css': htmlHandler.getCSS, 
-    '/getUsers': dataHandler.getUsers,
+    '/style.css': htmlHandler.getCSS,
+    '/client.js': htmlHandler.getClientCode, 
+    '/getWholeSet': dataHandler.getWholeSet,
     404: dataHandler.pageNotFound,
   };
 
