@@ -1,18 +1,19 @@
 const http = require('http');
-const responseHandler = require('./responses.js');
+const dataHandler = require('./dataResponses.js');
+const htmlHandler = requre('./htmlResponses.js');
 const query = require('querystring');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const getUrlStruct = {
-    '/': responseHandler.getIndex,
-    '/style.css': responseHandler.getCSS, 
-    '/getUsers': responseHandler.getUsers,
-    404: responseHandler.pageNotFound,
+    '/': htmlHandler.getIndex,
+    '/style.css': htmlHandler.getCSS, 
+    '/getUsers': dataHandler.getUsers,
+    404: dataHandler.pageNotFound,
   };
 
 const postUrlStruct = {
-    '/addUser': responseHandler.addUser,
+    '/addUser': dataHandler.addUser,
 };
 
 const parseBody = (request, response, handler) => {
@@ -47,7 +48,7 @@ const onRequest = (request, response) => {
 
     if(request.method === "POST") {
         if(postUrlStruct[parsedUrl.pathname]) {
-            parseBody(request, response, responseHandler.addUser);
+            parseBody(request, response, dataHandler.addUser);
         }
     } 
     else {

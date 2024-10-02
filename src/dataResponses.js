@@ -1,7 +1,3 @@
-const fs = require('fs');
-
-const index = fs.readFileSync(`${__dirname}/../client/client.html`);
-const css = fs.readFileSync(`${__dirname}/../client/style.css`);
 
 const users = {};
 
@@ -23,18 +19,8 @@ const respond = (request, response, status, content, type ) => {
   
     response.end();
 };
+module.exports.respond = respond; //exported so that we can use it in htmlResponses - cleaner and less repeated code. 
 
-// gets the index page
-const getIndex = (request, response) => {
-    respond(request, response, 200, index, 'text/html');
-};
-module.exports.getIndex = getIndex;
-
-// function to get css page
-const getCSS = (request, response) => {
-    respond(request, response, 200, css, 'text/css');
-  };
-module.exports.getCSS = getCSS;
 
 const getUsers = (request, response) => {
     const responseJSON = {
