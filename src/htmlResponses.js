@@ -4,7 +4,7 @@ const dataHandler = require('./dataResponses.js');
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
 const css = fs.readFileSync(`${__dirname}/../client/style.css`);
 const clientJS = fs.readFileSync(`${__dirname}/../client/client.js`);
-const pageNotFound = fs.readFileSync(`${__dirname}/../client/pageNotFound.html`);
+const pageNotFoundHTML = fs.readFileSync(`${__dirname}/../client/pageNotFound.html`);
 
 
 // gets the index page
@@ -26,6 +26,18 @@ const getClientCode = (request, response) => {
 module.exports.getClientCode = getClientCode;
 
 
-const get404Page = (request, response) => {
-  dataHandler.respond()
+const pageNotFound = (request, response) => {
+
+  const responseJSON = {
+      message: 'Page not Found!',
+      id:'Page Not Found',
+  };
+
+  if(request.acceptedTypes[0] === 'text/html') {
+    return dataHandler.respond(request, response, 404, pageNotFoundHTML, 'text/html');
+  }
+
+  return dataHandler.respond(request, response, 404, responseJSON, 'application/json');
 }
+module.exports.pageNotFound = pageNotFound;
+

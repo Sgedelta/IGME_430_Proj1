@@ -24,9 +24,44 @@ module.exports.respond = respond; //exported so that we can use it in htmlRespon
 
 
 const getWholeSet = (request, response) => {
+    //just return all of the set data - this is simple and not really that interesting, but this is the simpl
     return respond(request, response, 200, data, 'application/json');
 };
 module.exports.getWholeSet = getWholeSet;
+
+const getAllCards = (request, response) => {
+    //return the cards array
+    return respond(request, response, 200, data.data.cards, 'application/json');
+};
+module.exports.getAllCards = getAllCards;
+
+const getCardByName = (request, response) => {
+    const responseJSON = {
+        message: 'Card Name must be provided!',
+    }
+
+    const { searchTerm } = request.query;
+
+    if(!searchTerm) {
+        responseJSON.id = 'missingParams';
+        return respond(request, response, 400, responseJSON, 'application/json');
+    }
+
+    responseJSON.message = `Search Term Was: ${searchTerm}`; //temp
+
+    respond(request, response, 200, responseJSON, 'application/json'); //TEMP
+};
+module.exports.getCardByName = getCardByName;
+
+const getCardByKeyword = (request, response) => {
+
+};
+module.exports.getCardByKeyword = getCardByKeyword;
+
+const getRandomBooster = (request, response) => {
+
+};
+module.exports.getRandomBooster = getRandomBooster;
 
 const addUser = (request, response) => {
     const responseJSON = {
@@ -59,13 +94,3 @@ const addUser = (request, response) => {
     return respond(request, response, status, {}, 'application/json');
 };
 module.exports.addUser = addUser;
-
-const pageNotFound = (request, response) => {
-    const responseJSON = {
-        message: 'Page not Found!',
-        id:'Page Not Found',
-    };
-
-    return respond(request, response, 404, responseJSON, 'application/json');
-}
-module.exports.pageNotFound = pageNotFound;

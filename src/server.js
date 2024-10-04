@@ -1,7 +1,6 @@
 const http = require('http');
 const dataHandler = require('./dataResponses.js');
 const htmlHandler = require('./htmlResponses.js');
-const query = require('querystring');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -10,7 +9,11 @@ const getUrlStruct = {
     '/style.css': htmlHandler.getCSS,
     '/client.js': htmlHandler.getClientCode, 
     '/getWholeSet': dataHandler.getWholeSet,
-    404: dataHandler.pageNotFound,
+    '/getAllCards': dataHandler.getAllCards,
+    '/getCardByName': dataHandler.getCardByName,
+    '/getCardByKeyword': dataHandler.getCardByKeyword,
+    '/getRandomBooster': dataHandler.getRandomBooster,
+    404: htmlHandler.pageNotFound,
   };
 
 const postUrlStruct = {
@@ -44,6 +47,7 @@ const onRequest = (request, response) => {
     const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
   
     request.query = Object.fromEntries(parsedUrl.searchParams);
+    request.acceptedTypes = request.headers.accept.split(',');
     
     console.log(request.method);
 
