@@ -42,7 +42,8 @@ const getCardByName = (request, response) => {
     message: 'Card Name must be provided!',
   };
 
-  const { searchTerm } = request.query;
+  let { searchTerm } = request.query;
+  searchTerm = searchTerm.toLowerCase();
 
   if (!searchTerm) {
     responseJSON.id = 'missingParams';
@@ -50,7 +51,7 @@ const getCardByName = (request, response) => {
   }
 
   // this is all of the cards with the EXACT search term included in the "Name" field of the card
-  const foundCards = data.data.cards.filter((card) => card.name.includes(searchTerm));
+  const foundCards = data.data.cards.filter((card) => card.name.toLowerCase().includes(searchTerm));
   // In the future, we can expand this to a lot of or conditions and split up the
   // search term by commas or quotes or whatever. Make it more robust.
 
@@ -58,12 +59,20 @@ const getCardByName = (request, response) => {
   // responseJSON.message = `Filtered Cards Are: ${JSON.stringify(foundCards)}`;
   // This is where in the future we can return the data OR return a meaningful
   //    message if we didn't find anything (Filter came back as zero)
+  let status = 200;
+  responseJSON.message = foundCards;
+  responseJSON.id = 'cardsFound';
 
+    if(foundCards.length === 0) {
+        status = 204;
+        responseJSON.message = 'No Cards Match the given Search Term!';
+        responseJSON.id = 'noCardsFound';
+    }
 
   // FOR TESTING: Returns the object itself to inspect the JSON of it 
-  responseJSON.message = foundCards; 
+  // responseJSON.message = foundCards; 
 
-  return respond(request, response, 200, responseJSON, 'application/json'); // TEMP (?)
+  return respond(request, response, status, responseJSON, 'application/json'); // TEMP (?)
 };
 module.exports.getCardByName = getCardByName;
 
