@@ -35,7 +35,7 @@ const parseBody = (request, response, handler) => {
 
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
-    request.body = query.parse(bodyString);
+    request.body = parse(bodyString);
     handler(request, response);
   });
 };
