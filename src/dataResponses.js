@@ -37,6 +37,23 @@ const getAllCards = (request, response) => {
 };
 module.exports.getAllCards = getAllCards;
 
+const returnSomeCards = (request, response, responseJSON) => {
+    let status = 200;
+    responseJSON.message = foundCards;
+    responseJSON.id = 'cardsFound';
+  
+      if(foundCards.length === 0) {
+          status = 204;
+          responseJSON.message = 'No Cards Match the given Search Term!';
+          responseJSON.id = 'noCardsFound';
+      }
+  
+    // FOR TESTING: Returns the object itself to inspect the JSON of it 
+    // responseJSON.message = foundCards; 
+  
+    return respond(request, response, status, responseJSON, 'application/json'); // TEMP (?)
+}
+
 const getCardByName = (request, response) => {
   const responseJSON = {
     message: 'Card Name must be provided!',
@@ -59,25 +76,29 @@ const getCardByName = (request, response) => {
   // responseJSON.message = `Filtered Cards Are: ${JSON.stringify(foundCards)}`;
   // This is where in the future we can return the data OR return a meaningful
   //    message if we didn't find anything (Filter came back as zero)
-  let status = 200;
-  responseJSON.message = foundCards;
-  responseJSON.id = 'cardsFound';
 
-    if(foundCards.length === 0) {
-        status = 204;
-        responseJSON.message = 'No Cards Match the given Search Term!';
-        responseJSON.id = 'noCardsFound';
-    }
-
-  // FOR TESTING: Returns the object itself to inspect the JSON of it 
-  // responseJSON.message = foundCards; 
-
-  return respond(request, response, status, responseJSON, 'application/json'); // TEMP (?)
+  return returnSomeCards(request, response, responseJSON);
 };
 module.exports.getCardByName = getCardByName;
 
 const getCardByKeyword = (request, response) => {
   // similar implementation to Card By Name -> instead of checking card.name check card.keywords or MAYBE card.text // card.originalText?
+
+  const responseJSON = {
+    message: 'Keyword must be provided!',
+  };
+
+  let { searchTerm } = request.query;
+  searchTerm = searchTerm.toLowerCase();
+
+  if (!searchTerm) {
+    responseJSON.id = 'missingParams';
+    return respond(request, response, 400, responseJSON, 'application/json');
+  }
+
+  const foundCards = data.data.cards.filter((card) => card.name.toLowerCase().includes(searchTerm));
+
+  return returnSomeCards(request, response, responseJSON);
 };
 module.exports.getCardByKeyword = getCardByKeyword;
 
