@@ -47,7 +47,7 @@ const returnSomeCards = (request, response, incomingResponseJSON, foundCards) =>
   finalResponseJSON.cardCount = foundCards.length;
 
   if (foundCards.length === 0) {
-    status = 204;
+    status = 206; //partial content - no CARDS, but info that there are no cards.
     finalResponseJSON.message = 'No Cards Match the given Search Term!';
     finalResponseJSON.id = 'noCardsFound';
   }
@@ -80,15 +80,8 @@ const getCardByName = (request, response) => {
     return found;
   };
 
-  // this is all of the cards with the EXACT search term included in the "Name" field of the card
+  // this is all of the cards with the search term included in the "Name" field of the card - case insensitive
   const foundCards = data.data.cards.filter(cardFilter);
-  // In the future, we can expand this to a lot of or conditions and split up the
-  // search term by commas or quotes or whatever. Make it more robust.
-
-  // temporary response of just.. all the data as a string.
-  // responseJSON.message = `Filtered Cards Are: ${JSON.stringify(foundCards)}`;
-  // This is where in the future we can return the data OR return a meaningful
-  //    message if we didn't find anything (Filter came back as zero)
 
   return returnSomeCards(request, response, responseJSON, foundCards);
 };
@@ -130,10 +123,138 @@ const getCardByKeyword = (request, response) => {
 };
 module.exports.getCardByKeyword = getCardByKeyword;
 
+// Card Search Methods - they don't change between runs of the code
+//   Although the things they return will once cards are added via POST
+
+//Wildcard Slot can be any card in the set, so it does not need a filter function
+
+// returns true if the card is common and has a non foil print
+const commonNonFoil = (card) => {
+    return card.rarity === "common" && card.hasNonFoil;
+};
+
+//returns true if the card is uncommon and has a non foil print
+const uncommonNonFoil = (card) => {
+    return card.rarity === "uncommon" && card.hasNonFoil;
+};
+
+//returns true if the card is rare or mythic and has a non foil print
+const rareOrMythicNonFoil = (card) => {
+    return (card.rarity === "rare" || card.rarity === "mythic") && card.hasNonFoil;
+};
+
+//returns true if the card has a foil printing
+//this could be done in another way but... this is more consistent. 
+const isFoil = (card) => {
+    return card.hasFoil;
+}
+
+//returns true if any of the card's types are "Land"
+// again could be done another way but this is more consistent.
+const isLand = (card) => {
+    return card.types.includes("Land");
+}
+
+
+
 const getRandomBooster = (request, response) => {
-  // get information about a set of random cards that would represent a play booster - requires us to get a number of cards by their rarity/foil/whatever and then generate and pick randoms
-  // The rarity/foil/whatever won't change, so we could generate them as const before this is called for effeciency, then just pull random, but they won't include any "added" cards that we POST
-  //  so it's probably better to NOT do that and generate it on function call, even though that's not great with .filter() effeciency....
+  // get information about a set of random cards that would represent a play booster -
+  //   requires us to get a number of cards by their rarity/foil/whatever 
+  //   and then generate and pick randoms. We are IGNORING special guests
+  //   and art series, etc. Other non-main set cards. 
+
+  // get the random booster data that we need
+  const boosterPull = () => {
+        const randomPull = getRandomInt(data.data.booster.play.boostersTotalWeight);
+        console.log(randomPull + " " + data.data.booster.play.boostersTotalWeight);
+        let totalWeightSoFar = 0;
+        let boosterIndex = -1;
+        while(randomPull >= totalWeightSoFar) {
+            ++boosterIndex; 
+            let boosterWeight = data.data.booster.play.boosters[boosterIndex].weight;
+
+            totalWeightSoFar += boosterWeight;
+        }
+        return data.data.booster.play.boosters[boosterIndex];
+  }
+  const booster = boosterPull();
+
+  // filtered copies of the cardset
+  // wildcard - all of the cards in the set.
+  const wildcards = data.data.cards;
+
+  // common slots
+  const commons = wildcards.filter(commonNonFoil);
+
+  // uncommon slots
+  const uncommons = wildcards.filter(uncommonNonFoil);
+
+  // rares and mythics
+  const rareMythics = wildcards.filter(rareOrMythicNonFoil);
+
+  // wildcard FOIL
+  const wildFoils = wildcards.filter(isFoil);
+
+  // land
+  const lands = wildcards.filter(isLand);
+
+  //foil lands
+  const foilLands = lands.filter(isFoil);
+
+  const generatedPack = {}; //create a new empty JSON object that we return
+
+  //every pack has these fields
+  generatedPack.cards = [];
+  generatedPack.cardCount = 0;
+  generatedPack.boosterType = booster;
+
+  //add randomly pulled cards
+  for(let i = 0; i < booster.contents.common; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = commons[getRandomInt(commons.length)];
+    generatedPack.cardCount += 1;
+  }
+
+  for(let i = 0; i < booster.contents.uncommon; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = uncommons[getRandomInt(uncommons.length)];
+    generatedPack.cardCount += 1;
+  }
+
+  for(let i = 0; i < booster.contents.wildcard; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = wildcards[getRandomInt(wildcards.length)];
+    generatedPack.cardCount += 1;
+  }
+
+  for(let i = 0; i < booster.contents.rareMythicWithShowcase; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = rareMythics[getRandomInt(rareMythics.length)];
+    generatedPack.cardCount += 1;
+  }
+
+  //because we don't have the special guest cards, we are replacing them with another rare/mythic slot
+  for(let i = 0; i < booster.contents.specialGuest; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = rareMythics[getRandomInt(rareMythics.length)];
+    generatedPack.cardCount += 1;
+  }
+
+  for(let i = 0; i < booster.contents.foil; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = wildFoils[getRandomInt(wildFoils.length)];
+    generatedPack.cardCount += 1;
+  }
+
+  for(let i = 0; i < booster.contents.land; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = lands[getRandomInt(lands.length)];
+    generatedPack.cardCount += 1;
+  }
+
+  for(let i = 0; i < booster.contents.foilLand; ++i ) {
+    generatedPack.cards[generatedPack.cardCount] = foilLands[getRandomInt(foilLands.length)];
+    generatedPack.cardCount += 1;
+  }
+  
+
+
+
+  return respond(request, response, 200, generatedPack, 'application/json');
+
 };
 module.exports.getRandomBooster = getRandomBooster;
 
@@ -168,3 +289,9 @@ const addUser = (request, response) => { // TEMP: Add User is still here so we c
   return respond(request, response, status, {}, 'application/json');
 };
 module.exports.addUser = addUser;
+
+
+// =========HELPERS=============
+const getRandomInt = (max) => {
+    return Math.floor(Math.random() * max)
+}
