@@ -1,3 +1,4 @@
+const { match } = require('assert');
 const fs = require('fs');
 
 const data = JSON.parse(fs.readFileSync(`${__dirname}/../datasets/DSK.json`));
@@ -157,7 +158,6 @@ const getRandomBooster = (request, response) => {
   // get the random booster data that we need
   const boosterPull = () => {
     const randomPull = getRandomInt(data.data.booster.play.boostersTotalWeight);
-    console.log(`${randomPull} ${data.data.booster.play.boostersTotalWeight}`);
     let totalWeightSoFar = 0;
     let boosterIndex = -1;
     while (randomPull >= totalWeightSoFar) {
@@ -220,7 +220,7 @@ const getRandomBooster = (request, response) => {
     generatedPack.cardCount += 1;
   }
 
-  // because we don't have the special guest cards, we are replacing them with another rare/mythic slot
+  // because we don't have the special guest cards, we are replacing them with another rare/mythic
   for (let i = 0; i < booster.contents.specialGuest; ++i) {
     generatedPack.cards[generatedPack.cardCount] = rareMythics[getRandomInt(rareMythics.length)];
     generatedPack.cardCount += 1;
@@ -276,3 +276,120 @@ const addUser = (request, response) => { // TEMP: Add User is still here so we c
   return respond(request, response, status, {}, 'application/json');
 };
 module.exports.addUser = addUser;
+
+const addBooster = (request, response) => {
+  const responseJSON = {
+    message: 'Booster String not Found! Please input a proper Booster String. Booster Strings should only consist of numbers, whitespace, commas, and the characters :, c, u, r, w, f, and l',
+  };
+
+  const { boosterString } = request.body;
+
+  if (!boosterString) {
+    responseJSON.id = 'missingParams';
+    return respond(request, response, 400, responseJSON, 'application/json');
+  }
+
+  responseJSON.message = 'Invalid Booster Format! Boosters should only consist of numbers, whitespace, commas, and the characters :, c, u, r, w, f, and l';
+
+  const parsedString = boosterString.split(':', 2);
+  if (parsedString.length !== 2 || isNaN(parsedString[0])) {
+    responseJSON.id = 'invalidParams';
+    return respond(request, response, 400, responseJSON, 'application/json');
+  }
+
+  const newBooster = {};
+  newBooster.contents = {};
+  newBooster.weight = +parsedString[0];
+  const boosterDetails = parsedString[1].split(',');
+
+  let foundInvalidFlag = false;
+
+  // loop through each of the details we got
+  for (let i = 0; i < boosterDetails.length; ++i) {
+    const trimmedDetails = boosterDetails[i].trim();
+    // if it doesn't match our basic regex, break here
+    if (!trimmedDetails.match(/[curwfl]l?\d+/)) {
+      foundInvalidFlag = true;
+      break;
+    }
+
+    // otherwise, count the amount of letters at the start that match our things we're looking for.
+    let countTotal = 0;
+    while (countTotal < 2 && trimmedDetails[countTotal].match(/[curwfl]/)) {
+      ++countTotal;
+    }
+
+    let addedCards = 0;
+    // based on that, we handle and add data as needed.
+    switch (countTotal) {
+      case 1:
+        // double check that the first thing is of our regex and the rest is a number
+        if (!trimmedDetails[0].match(/[curwfl]/) || !trimmedDetails.substring(1).match(/\d+/)) {
+          foundInvalidFlag = true;
+          break;
+        }
+        addedCards = parseInt(trimmedDetails.substring(1));
+        // based on the first char, add the correct amount of thing
+        switch (trimmedDetails[0]) {
+          case 'c':
+            newBooster.contents.common = addedCards;
+            break;
+
+          case 'u':
+            newBooster.contents.uncommon = addedCards;
+            break;
+
+          case 'r':
+            newBooster.contents.rareMythicWithShowcase = addedCards;
+            break;
+
+          case 'w':
+            newBooster.contents.wildcard = addedCards;
+            break;
+
+          case 'f':
+            newBooster.contents.foil = addedCards;
+            break;
+
+          case 'l':
+            newBooster.contents.land = addedCards;
+            break;
+        }
+
+        break;
+
+      case 2:
+        // if there are two matching things, they must equal 'fl', and be followed by only numbers
+        if (!trimmedDetails.substring(0, 2).match('fl') || !trimmedDetails.substring(2).match(/\d+/)) {
+          foundInvalidFlag = true;
+          break;
+        }
+
+        // otherwise we are adding a foilLand
+        addedCards = parseInt(trimmedDetails[i].substring(2));
+        newBooster.foilLand = addedCards;
+        break;
+
+      default:
+        foundInvalidFlag = true;
+        break;
+    }
+  }
+
+  // we found something invalid somewhere, stop execution.
+  if (foundInvalidFlag) {
+    responseJSON.id = 'invalidParams';
+    return respond(request, response, 400, responseJSON, 'application/json');
+  }
+
+  data.data.booster.play.boosters[data.data.booster.play.boosters.length] = newBooster;
+  data.data.booster.play.boostersTotalWeight += newBooster.weight;
+
+  return respond(request, response, 201, { message: 'New Booster Added!' }, 'application/json');
+};
+module.exports.addBooster = addBooster;
+
+const addCard = (request, response) => {
+
+};
+module.exports.addCard = addCard;

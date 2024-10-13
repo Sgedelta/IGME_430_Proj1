@@ -1,9 +1,11 @@
 const http = require('http');
+const query = require('querystring');
 const dataHandler = require('./dataResponses.js');
 const htmlHandler = require('./htmlResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+// url struct for GET and HEAD requests - requests where we return data on success
 const getUrlStruct = {
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
@@ -16,7 +18,9 @@ const getUrlStruct = {
   404: htmlHandler.pageNotFound,
 };
 
+// url struct for POST requests - requests where we DON'T return data on success.
 const postUrlStruct = {
+  '/addBooster': dataHandler.addBooster,
   '/addUser': dataHandler.addUser,
 };
 
@@ -35,7 +39,7 @@ const parseBody = (request, response, handler) => {
 
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
-    request.body = bodyString;
+    request.body = query.parse(bodyString);
     handler(request, response);
   });
 };
@@ -51,7 +55,9 @@ const onRequest = (request, response) => {
 
   if (request.method === 'POST') {
     if (postUrlStruct[parsedUrl.pathname]) {
-      parseBody(request, response, dataHandler.addUser);
+      parseBody(request, response, postUrlStruct[parsedUrl.pathname]);
+    } else {
+      getUrlStruct[404](request, response);
     }
   } else if (getUrlStruct[parsedUrl.pathname]) {
     getUrlStruct[parsedUrl.pathname](request, response);

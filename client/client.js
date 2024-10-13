@@ -65,7 +65,7 @@ const handleResponse = async (response, parseResponse) => {
     const nameField = form.querySelector("#nameField");
     const ageField = form.querySelector("#ageField");
     
-    const formData = `name=${nameField.value}&age=${ageField.value}&searchTerm=Ethereal%20Armor`;
+    const formData = `boosterString=${nameField.value}&age=${ageField.value}`;
     
     let response = await fetch(url, {
         method: method,
