@@ -132,21 +132,21 @@ module.exports.getCardByKeyword = getCardByKeyword;
 // Wildcard Slot can be any card in the set, so it does not need a filter function
 
 // returns true if the card is common and has a non foil print
-const commonNonFoil = (card) => card.rarity === 'common' && card.hasNonFoil;
+const commonNonFoil = (card) => card && (card.rarity === 'common' && card.hasNonFoil);
 
 // returns true if the card is uncommon and has a non foil print
-const uncommonNonFoil = (card) => card.rarity === 'uncommon' && card.hasNonFoil;
+const uncommonNonFoil = (card) => card && (card.rarity === 'uncommon' && card.hasNonFoil);
 
 // returns true if the card is rare or mythic and has a non foil print
-const rareOrMythicNonFoil = (card) => (card.rarity === 'rare' || card.rarity === 'mythic') && card.hasNonFoil;
+const rareOrMythicNonFoil = (card) => card && ((card.rarity === 'rare' || card.rarity === 'mythic') && card.hasNonFoil);
 
 // returns true if the card has a foil printing
 // this could be done in another way but... this is more consistent.
-const isFoil = (card) => card.hasFoil;
+const isFoil = (card) => card && (card.hasFoil);
 
 // returns true if any of the card's types are "Land"
 // again could be done another way but this is more consistent.
-const isLand = (card) => card.types.includes('Land');
+const isLand = (card) => card && (card.types.includes('Land'));
 
 const getRandomBooster = (request, response) => {
   // get information about a set of random cards that would represent a play booster -
