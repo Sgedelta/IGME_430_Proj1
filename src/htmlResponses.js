@@ -14,10 +14,10 @@ const getIndex = (request, response) => {
 };
 module.exports.getIndex = getIndex;
 
-//gets the documentation page
+// gets the documentation page
 const documentationPage = (request, response) => {
   dataHandler.respond(request, response, 200, documentation, 'text/html');
-}
+};
 module.exports.documentationPage = documentationPage;
 
 // function to get normal css page
@@ -26,19 +26,19 @@ const getCSS = (request, response) => {
 };
 module.exports.getCSS = getCSS;
 
-//function to get documentationCSS
+// function to get documentationCSS
 const getDocumentationCSS = (request, response) => {
   dataHandler.respond(request, response, 200, docuCss, 'text/css');
 };
 module.exports.getDocumentationCSS = getDocumentationCSS;
 
-//gets the client code
+// gets the client code
 const getClientCode = (request, response) => {
   dataHandler.respond(request, response, 200, clientJS, 'text/javascript');
 };
 module.exports.getClientCode = getClientCode;
 
-//gets the 404 page
+// gets the 404 page
 const pageNotFound = (request, response) => {
   const responseJSON = {
     message: 'Page not Found!',
@@ -52,5 +52,3 @@ const pageNotFound = (request, response) => {
   return dataHandler.respond(request, response, 404, responseJSON, 'application/json');
 };
 module.exports.pageNotFound = pageNotFound;
-
-

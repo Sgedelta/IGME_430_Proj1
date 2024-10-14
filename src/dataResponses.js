@@ -114,7 +114,8 @@ const getCardByKeyword = (request, response) => {
     for (let term = 0; term < parsedSearchTerms.length; ++term) {
       if (card.keywords) { // some cards do not have keywords, and the "keywords" field DNE
         for (let keyword = 0; keyword < card.keywords.length; ++keyword) {
-          found = found || card.keywords[keyword].toLowerCase().includes(parsedSearchTerms[term].trim());
+          found = found
+            || card.keywords[keyword].toLowerCase().includes(parsedSearchTerms[term].trim());
         }
       }
     }
