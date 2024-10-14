@@ -30,7 +30,7 @@ module.exports.respond = respond;
 // Function to return cards if they exist, otherwise returns that no cards are found.
 // Will return a success no matter what, so only call if everything is alright otherwise.
 const returnSomeCards = (request, response, incomingResponseJSON, foundCards) => {
-  let status = 200;
+  const status = 200;
   const finalResponseJSON = incomingResponseJSON;
   finalResponseJSON.cards = foundCards;
   finalResponseJSON.id = 'cardsFound';
@@ -40,7 +40,7 @@ const returnSomeCards = (request, response, incomingResponseJSON, foundCards) =>
     finalResponseJSON.message = 'No Cards Match the given Search Term!';
     finalResponseJSON.id = 'noCardsFound';
   } else {
-    finalResponseJSON.message = `${finalResponseJSON.cardCount} Card${finalResponseJSON.cardCount === 1 ? "": "s"} Found!`;
+    finalResponseJSON.message = `${finalResponseJSON.cardCount} Card${finalResponseJSON.cardCount === 1 ? '' : 's'} Found!`;
   }
 
   // FOR TESTING: Returns the object itself to inspect the JSON of it
@@ -114,7 +114,7 @@ const getCardByKeyword = (request, response) => {
     for (let term = 0; term < parsedSearchTerms.length; ++term) {
       if (card.keywords) { // some cards do not have keywords, and the "keywords" field DNE
         for (let keyword = 0; keyword < card.keywords.length; ++keyword) {
-          found = found || card.keywords[keyword].toLowerCase().includes(parsedSearchTerms[term]);
+          found = found || card.keywords[keyword].toLowerCase().includes(parsedSearchTerms[term].trim());
         }
       }
     }
