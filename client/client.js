@@ -32,27 +32,60 @@ const handleResponse = async (response, parseResponse) => {
           content.innerHTML += `<p>${responseJSON.message}</p>`;
         }
 
-       // let jsonString = JSON.stringify(responseJSON.);
-       // content.innerHTML += `<p>${jsonString}</p>`;
+        //get the card list, it's in two different places in different responses
+        let cardList = responseJSON.cards;
+        if(responseJSON.data) {
+            cardList = cardList || responseJSON.data.cards;
+        }
+
+        if(cardList) {
+            content.innerHTML += '<p class="cardDisplay"><hr>';
+            for(let i = 0; i < cardList.length; ++i) {
+                let card = cardList[i];
+                content.innerHTML += `<span class="card">${card.name}: `;
+                if(card.manaCost) { //some cards do not have a mana cost
+                    content.innerHTML += `${card.manaCost}, `;
+                }
+                content.innerHTML += `${card.type}, ${card.text}</span>`;
+                content.innerHTML += "<hr>";
+            }
+            content.innerHTML += '</p>';
+        }
         
     
     } else {
       content.innerHTML += '<p>Metadata Recieved</p>'
     }
     
-    };
+};
     
-    const requestUpdate = async (form) => {
+const requestUpdate = async (form) => {
     const url = form.querySelector('#urlField').value;
     const method = form.querySelector('#methodSelect').value;
+
+    const searchTerm = form.querySelector('#searchField').value;
+    const formData = `?searchTerm=${searchTerm}`;
     
-    let response = await fetch(url, {
-        method, 
-        headers: {
-            'Accept': 'application/json'
-        },
-    });
-    
+    let response; 
+    //if we have search terms, send with those
+    if(searchTerm) {
+        response = await fetch(url + formData, {
+            method, 
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+        });
+    } else {
+        //otherwise, don't send with search terms
+        response = await fetch(url, {
+            method, 
+            headers: {    
+                'Accept': 'application/json'
+            },
+        });
+    }
+
     handleResponse(response, method === 'get');
     };
     
@@ -63,9 +96,9 @@ const handleResponse = async (response, parseResponse) => {
 
     sendPost(form, formData);
 
-    };
+};
 
-    const sendCard = async (form) => {
+const sendCard = async (form) => {
         const name = form.querySelector("#nameField");
         const cost = form.querySelector("#manaCostField");
         const type = form.querySelector("#typeLineField");
@@ -90,9 +123,9 @@ const handleResponse = async (response, parseResponse) => {
       });
     
     handleResponse(response, true);
-    };
+};
     
-    const init = () => {
+const init = () => {
     const form = document.querySelector("#userForm");
     const boosterForm = document.querySelector("#boosterForm");
     const cardForm = document.querySelector("#cardForm");
@@ -121,9 +154,9 @@ const handleResponse = async (response, parseResponse) => {
 
 
     console.log("Client Code Loaded!");
-    };
+};
     
-    window.onload = init;
+window.onload = init;
     
     
     

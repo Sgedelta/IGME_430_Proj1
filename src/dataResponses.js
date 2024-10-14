@@ -32,7 +32,7 @@ module.exports.respond = respond;
 const returnSomeCards = (request, response, incomingResponseJSON, foundCards) => {
   let status = 200;
   const finalResponseJSON = incomingResponseJSON;
-  finalResponseJSON.message = foundCards;
+  finalResponseJSON.cards = foundCards;
   finalResponseJSON.id = 'cardsFound';
   finalResponseJSON.cardCount = foundCards.length;
 
@@ -40,6 +40,8 @@ const returnSomeCards = (request, response, incomingResponseJSON, foundCards) =>
     status = 206; // partial content - no CARDS, but info that there are no cards.
     finalResponseJSON.message = 'No Cards Match the given Search Term!';
     finalResponseJSON.id = 'noCardsFound';
+  } else {
+    finalResponseJSON.message = `Card${finalResponseJSON.cardCount === 0 ? "s": ""} Found!`;
   }
 
   // FOR TESTING: Returns the object itself to inspect the JSON of it

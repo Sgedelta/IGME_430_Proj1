@@ -40,13 +40,19 @@
     <form id="userForm" action="/getWholeSet" method="get">
       <select id='urlField'>
         <option value='/getWholeSet'>/getWholeSet</option>
-        <option value='/notReal'>/notReal</option>
+        <option value='/getCardByName'>/getCardByName</option>
+        <option value='/getCardByKeyword'>/getCardByKeyword</option>
+        <option value='/getRandomBooster'>/getRandomBooster</option>
       </select>
+      <span class="searchTerm">
+        <label for="searchInput">Search Term(s): </label>
+        <input id="searchField" type="text" name="searchInput" />
+      </span>
       <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
       </select>
-      <input type="submit" value="Get User" />
+      <input type="submit" value="Request Information" />
     </form>
   </section>
   <section id="content">
