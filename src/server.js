@@ -21,6 +21,7 @@ const getUrlStruct = {
 // url struct for POST requests - requests where we DON'T return data on success.
 const postUrlStruct = {
   '/addBooster': dataHandler.addBooster,
+  '/addCard': dataHandler.addCard,
   '/addUser': dataHandler.addUser,
 };
 

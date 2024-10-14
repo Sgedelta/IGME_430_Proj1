@@ -291,7 +291,7 @@ const addBooster = (request, response) => {
 
   responseJSON.message = 'Invalid Booster Format! Boosters should only consist of numbers, whitespace, commas, and the characters :, c, u, r, w, f, and l';
 
-  const parsedString = boosterString.split(':', 2);
+  const parsedString = boosterString.toLowerCase().split(':', 2);
   if (parsedString.length !== 2 || isNaN(parsedString[0])) {
     responseJSON.id = 'invalidParams';
     return respond(request, response, 400, responseJSON, 'application/json');
@@ -390,6 +390,56 @@ const addBooster = (request, response) => {
 module.exports.addBooster = addBooster;
 
 const addCard = (request, response) => {
+  const responseJSON = {
+    message: 'Cards must have a Came, Mana Cost, Type Line, and Card Text!',
+  };
 
+  const { cardName, manaCost, typeLine, cardText } = request.body;
+
+  if (!cardName || !manaCost || !typeLine || !cardText ) {
+    responseJSON.id = 'missingParams';
+    return respond(request, response, 400, responseJSON, 'application/json');
+  }
+
+  //filter card by name to get if the name exists - we are matching name exactly, ignoring case.
+  const nameCheck = (card) => {
+    return card.name.toLowerCase() === cardName.toLowerCase();
+  }
+
+  //store status and card index for later
+  let status = 204;
+  let cardIndex = data.data.cards.findIndex(nameCheck);
+
+  //this is what actually makes a new card and updates status if we don't find a card
+  if(cardIndex === -1) {
+    data.data.cards[data.data.totalSetSize] = {
+      name: cardName,
+    }
+    cardIndex = data.data.totalSetSize;
+    data.data.totalSetSize += 1;
+    status = 201;
+  }
+
+  //costs are formatted in braces, this section makes it so users do not need to format like that
+  let encapsulatedCostString = "";
+  for(let i = 0; i < manaCost.length; ++i) {
+    encapsulatedCostString = encapsulatedCostString + `{${manaCost[i]}}`;
+  }
+
+  //update/add card cost
+  data.data.cards[cardIndex].manaCost = encapsulatedCostString;
+
+  //update type line
+  data.data.cards[cardIndex].type = typeLine;
+
+  //update card text
+  data.data.cards[cardIndex].text = cardText;
+
+  if (status === 201) {
+    responseJSON.message = 'New Card Created!';
+    return respond(request, response, status, responseJSON, 'application/json');
+  }
+
+  return respond(request, response, status, {message: "Card Edited!"}, 'application/json');
 };
 module.exports.addCard = addCard;
