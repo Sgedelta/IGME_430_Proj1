@@ -39,17 +39,18 @@ const handleResponse = async (response, parseResponse) => {
         }
 
         if(cardList) {
-            content.innerHTML += '<p class="cardDisplay"><hr>';
+            let addedText = '<p class="cardDisplay"><hr>'
             for(let i = 0; i < cardList.length; ++i) {
                 let card = cardList[i];
-                content.innerHTML += `<span class="card">${card.name}: `;
+                addedText += `<span class="card">${card.name}: `;
                 if(card.manaCost) { //some cards do not have a mana cost
-                    content.innerHTML += `${card.manaCost}, `;
+                    addedText += `${card.manaCost}, `;
                 }
-                content.innerHTML += `${card.type}, ${card.text}</span>`;
-                content.innerHTML += "<hr>";
+                addedText += `${card.type}, ${card.text}</span>`;
+                addedText += "<hr>";
             }
-            content.innerHTML += '</p>';
+            addedText += '</p>';
+            content.innerHTML += addedText;
         }
         
     
