@@ -37,11 +37,10 @@ const returnSomeCards = (request, response, incomingResponseJSON, foundCards) =>
   finalResponseJSON.cardCount = foundCards.length;
 
   if (foundCards.length === 0) {
-    status = 206; // partial content - no CARDS, but info that there are no cards.
     finalResponseJSON.message = 'No Cards Match the given Search Term!';
     finalResponseJSON.id = 'noCardsFound';
   } else {
-    finalResponseJSON.message = `Card${finalResponseJSON.cardCount === 0 ? "s": ""} Found!`;
+    finalResponseJSON.message = `${finalResponseJSON.cardCount} Card${finalResponseJSON.cardCount === 1 ? "": "s"} Found!`;
   }
 
   // FOR TESTING: Returns the object itself to inspect the JSON of it
