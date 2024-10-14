@@ -22,7 +22,6 @@ const getUrlStruct = {
 const postUrlStruct = {
   '/addBooster': dataHandler.addBooster,
   '/addCard': dataHandler.addCard,
-  '/addUser': dataHandler.addUser,
 };
 
 const parseBody = (request, response, handler) => {

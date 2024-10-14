@@ -245,38 +245,6 @@ const getRandomBooster = (request, response) => {
 };
 module.exports.getRandomBooster = getRandomBooster;
 
-const addUser = (request, response) => { // TEMP: Add User is still here so we can quickly generate post methods without referencing other things. Will be removed.
-  const responseJSON = {
-    message: 'Name and Age are both required',
-  };
-
-  const { name, age } = request.body;
-
-  if (!name || !age) {
-    responseJSON.id = 'missingParams';
-    return respond(request, response, 400, responseJSON, 'application/json');
-  }
-
-  let status = 204;
-
-  if (!users[name]) {
-    status = 201;
-    users[name] = {
-      name,
-    };
-  }
-
-  users[name].age = age;
-
-  if (status === 201) {
-    responseJSON.message = 'New User Created!';
-    return respond(request, response, status, responseJSON, 'application/json');
-  }
-
-  return respond(request, response, status, {}, 'application/json');
-};
-module.exports.addUser = addUser;
-
 const addBooster = (request, response) => {
   const responseJSON = {
     message: 'Booster String not Found! Please input a proper Booster String. Booster Strings should only consist of numbers, whitespace, commas, and the characters :, c, u, r, w, f, and l',
