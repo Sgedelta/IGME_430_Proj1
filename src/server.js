@@ -8,7 +8,9 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 // url struct for GET and HEAD requests - requests where we return data on success
 const getUrlStruct = {
   '/': htmlHandler.getIndex,
+  '/documentation': htmlHandler.documentationPage,
   '/style.css': htmlHandler.getCSS,
+  '/documentationStyle.css': htmlHandler.getDocumentationCSS,
   '/client.js': htmlHandler.getClientCode,
   '/getWholeSet': dataHandler.getWholeSet,
   '/getAllCards': dataHandler.getAllCards,
