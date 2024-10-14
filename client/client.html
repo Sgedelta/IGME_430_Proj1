@@ -1,20 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Duskmourne Card Search</title>
+  <title>Duskmourn Card Search</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script src="./client.js"></script>
 </head>
 <body>
   <section id="top">
-    <h3>POST Status Code Tests</h3>
-    <form id="nameForm" action="/addBooster" method="post">
-      <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/>
-      <input type="submit" value="Add User" />
+    <h3><i>Duskmourn: House of Horror</i> Card Search</h3>
+    <p><b>Add Booster</b><br>Booster Strings must be in the following format: <span class="codeBlock">[weight]:[id 1],[id 2],... [id n]</span>
+     where [id n] is either c, u, r, w, f, l, or fl (indicating card type) followed by an integer (indicating number of that card in the booster).
+     <br>c = random common card
+     <br>u = random uncommon card
+     <br>r = random rare card
+     <br>w = random card
+     <br>f = random foil card
+     <br>l = random land card
+     <br>fl = random foil land card
+    </p>
+    <form id="boosterForm" action="/addBooster" method="post">
+      <label for="boosterStringInput">Booster String: </label>
+      <input id="boosterStringField" type="text" name="boosterStringInput" />
+      <input type="submit" value="Add Booster Pack" />
+    </form>
+    <form id="cardForm" action="/addCard" method="post">
+      <label for="nameInput">Card Name: </label>
+      <input id="nameField" type="text" name="nameInput" />
+      <label for="manaInput">Mana Cost: </label>
+      <input id="manaCostField" type="text" name="manaInput" />
+      <label for="typeInput">Card Type: </label>
+      <input id="typeLineField" type="text" name="typeInput" />
+      <br>
+      <label for="textInput">Card Text: </label>
+      <textarea id="cardTextField" name="textInput" rows="5" cols="75"></textarea>
+      <br>
+      <input type="submit" value="Add Card" />
     </form>
     <form id="userForm" action="/getWholeSet" method="get">
       <select id='urlField'>

@@ -31,11 +31,9 @@ const handleResponse = async (response, parseResponse) => {
         if(responseJSON.message) {
           content.innerHTML += `<p>${responseJSON.message}</p>`;
         }
-    
-    
 
-          let jsonString = JSON.stringify(responseJSON.data.cards[250].name);
-          content.innerHTML += `<p>${jsonString}</p>`;
+       // let jsonString = JSON.stringify(responseJSON.);
+       // content.innerHTML += `<p>${jsonString}</p>`;
         
     
     } else {
@@ -58,18 +56,33 @@ const handleResponse = async (response, parseResponse) => {
     handleResponse(response, method === 'get');
     };
     
-    const sendPost = async (form) => {
-    const url = form.getAttribute('action');
-    const method = form.getAttribute('method');
+    const sendBooster = async (form) => {
+    const boosterField = form.querySelector("#boosterStringField");
     
-    const nameField = form.querySelector("#nameField");
-    const ageField = form.querySelector("#ageField");
-    
-    const formData = `boosterString=${nameField.value}&age=${ageField.value}`;
-    
-    let response = await fetch(url, {
-        method: method,
-        headers: {
+    const formData = `boosterString=${boosterField.value}`;
+
+    sendPost(form, formData);
+
+    };
+
+    const sendCard = async (form) => {
+        const name = form.querySelector("#nameField");
+        const cost = form.querySelector("#manaCostField");
+        const type = form.querySelector("#typeLineField");
+        const text = form.querySelector("#cardTextField");
+
+        const formData = `cardName=${name.value}&manaCost=${cost.value}&typeLine=${type.value}&cardText=${text.value}`;
+        
+        sendPost(form, formData);
+    }
+
+    const sendPost = async (form, formData) => {
+        const url = form.getAttribute('action');
+        const method = form.getAttribute('method');
+        
+        let response = await fetch(url, {
+            method: method,
+            headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
         },
@@ -77,11 +90,12 @@ const handleResponse = async (response, parseResponse) => {
       });
     
     handleResponse(response, true);
-    }
+    };
     
     const init = () => {
     const form = document.querySelector("#userForm");
-    const postForm = document.querySelector("#nameForm");
+    const boosterForm = document.querySelector("#boosterForm");
+    const cardForm = document.querySelector("#cardForm");
 
     const getWholeSet = (e) => {
         e.preventDefault();
@@ -89,14 +103,21 @@ const handleResponse = async (response, parseResponse) => {
         return false;
     }
     
-    const addUser = (e) => {
+    const addBooster = (e) => {
         e.preventDefault();
-        sendPost(postForm);
+        sendBooster(boosterForm);
+        return false;
+    }
+
+    const addCard = (e) => {
+        e.preventDefault();
+        sendCard(cardForm);
         return false;
     }
 
     form.addEventListener('submit', getWholeSet);
-    postForm.addEventListener('submit', addUser);
+    boosterForm.addEventListener('submit', addBooster);
+    cardForm.addEventListener('submit', addCard);
 
 
     console.log("Client Code Loaded!");
