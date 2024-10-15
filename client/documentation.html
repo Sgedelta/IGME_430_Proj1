@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Duskmourn Card Search Documentation</title>
+  <link rel="stylesheet" type="text/css" href="/documentationStyle.css">
+</head>
+<body>
+    <span class="relativeEndpoint">/getWholeSet</span> <br>
+    <ul>
+        <li>Methods: GET, HEAD</li>
+        <li>Query Params: None</li>
+        <li>Body Params: None</li>
+        <li>Returns: All of the data from the set in JSON. Displaying Cards may take a while due to size!</li>
+        <li>Example: [app-link]/getWholeSet</li>
+    </ul> <br>
+    <span class="relativeEndpoint">/getCardByName</span> <br>
+    <ul>
+        <li>Methods: GET, HEAD</li>
+        <li>Query Params: searchTerm</li>
+        <li>Body Params: None</li>
+        <li>Returns: All of the cards that match the search terms (comma seperated) in the name</li>
+        <li>Example: [app-link]/getCardByName?searchTerm=valgavoth</li>
+    </ul> <br>
+    <span class="relativeEndpoint">/getCardByKeyword</span> <br>
+    <ul>
+        <li>Methods: GET, HEAD</li>
+        <li>Query Params: searchTerm</li>
+        <li>Body Params: None</li>
+        <li>Returns: All of the cards that match the keywords (comma seperated) in the card</li>
+        <li>Example: [app-link]/getCardByName?searchTerm=trample,flying</li>
+    </ul> <br>
+    <span class="relativeEndpoint">/getRandomBooster</span> <br>
+    <ul>
+        <li>Methods: GET, HEAD</li>
+        <li>Query Params: None</li>
+        <li>Body Params: None</li>
+        <li>Returns: A randomly selected Booster Pack from the set - replacing special guest cards with Rare/Mythic cards.</li>
+        <li>Example: [app-link]/getRandomBooster</li>
+    </ul> <br>
+    <span class="relativeEndpoint">/addBooster</span> <br>
+    <ul>
+        <li>Methods: POST</li>
+        <li>Query Params: None</li>
+        <li>Body Params: boosterString</li>
+        <li>Returns: All of the cards that match the keywords (comma seperated) in the card</li>
+        <li>Example: A POST request with a body parameter of boosterString: "250:c10l2" would have a 250 weight of getting chosen, the booster pack having 10 common cards and 2 land cards.</li>
+    </ul> <br>
+    <span class="relativeEndpoint">/addCard</span> <br>
+    <ul>
+        <li>Methods: POST</li>
+        <li>Query Params: None</li>
+        <li>Body Params: cardName, manaCost, typeLine, cardText</li>
+        <li>Returns: All of the cards that match the keywords (comma seperated) in the card</li>
+        <li>Example: a POST request with body paramteres of cardName: "A New Card", manaCost: "WWWB6", typeLine: "Enchantment Creature", and cardText: "This is a new card, it's very good!", would add a card with that information if a card by the name of "A New Card" didn't exist in the set already.</li>
+    </ul> <br>
+  
+</body>
+</html>

@@ -53,8 +53,6 @@ const onRequest = (request, response) => {
   request.query = Object.fromEntries(parsedUrl.searchParams);
   request.acceptedTypes = request.headers.accept.split(',');
 
-  console.log(request.method);
-
   if (request.method === 'POST') {
     if (postUrlStruct[parsedUrl.pathname]) {
       parseBody(request, response, postUrlStruct[parsedUrl.pathname]);
